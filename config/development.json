@@ -1,0 +1,7 @@
+{
+    "host": "http://localhost:5000",
+    "corsAllowedDomains": [
+      "*"
+    ],
+    "db": "mongodb://root:iDZu4R8yfR9Qza9@cluster0-shard-00-00.2ohxv.mongodb.net:27017,cluster0-shard-00-01.2ohxv.mongodb.net:27017,cluster0-shard-00-02.2ohxv.mongodb.net:27017/codaglobal?ssl=true&replicaSet=atlas-va45p6-shard-0&authSource=admin&retryWrites=true&w=majority"
+  }

@@ -1,0 +1,11 @@
+{
+    "host": "http://localhost:5000",
+    "corsAllowedDomains": [
+      "*"
+    ],
+    "db": "mongodb://localhost:27017/touchbase",
+    "appReqsAllowedPerMin": 1000,
+    "cookieSecret": "secretM4gHUp5AixLQm1I",
+    "tokenSecret": "cdfa83a6-7c61-4d7b-8834-ae341e9b4560"
+  }
+  

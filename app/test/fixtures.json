@@ -1,0 +1,15 @@
+{
+    "invalidUser": {
+        "firstName": "Test",
+        "lastName": "User",
+        "phoneNumber": "123456780",
+        "user": "11124536"
+    },
+    "validCategory": {
+        "name": "Shopping",
+        "type": "Default"
+    },
+    "invalidCategory": {
+        "type": "Default"
+    }
+}
