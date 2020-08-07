@@ -1,8 +1,13 @@
+.DS_Store
+
 .git
 .idea
 .dist
-.env
 node_modules/
-dist/
 *.log
 .history
+*.map
+/logs
+tmp/
+.env
+config/production.json
