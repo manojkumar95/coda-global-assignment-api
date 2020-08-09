@@ -11,9 +11,8 @@ const express = require('express'),
     app = express()
 
 const defaultRoute = require('./app/routes/index.js')
-const categoryRoutes = require('./app/routes/category.routes.js')
 const userRoutes = require('./app/routes/user.routes.js')
-const expenseRoutes = require('./app/routes/expense.routes.js')
+const candidateRoutes = require('./app/routes/candidate.routes.js')
 
 
 app.use(cookieParser(config.cookieSecret));
@@ -58,9 +57,8 @@ app.use(express.json({
 }));
 
 app.use('/', defaultRoute);
-app.use('/api/', categoryRoutes);
 app.use('/api/', userRoutes);
-app.use('/api/', expenseRoutes);
+app.use('/api/', candidateRoutes);
 
 /**
  * Exposing global variables

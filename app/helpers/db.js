@@ -1,9 +1,10 @@
 'use strict';
 
-const config = require('config'),
-  mongoose = require('mongoose'),
-  mongodbURL = config.get('db'),
-  Promise = require('bluebird');
+const config = require('config');
+const mongoose = require('mongoose');
+const mongodbURL = config.get('db');
+const Promise = require('bluebird');
+const { loadInitialData } = require('../migration/load.data')
 
 /**
  * Configuring mongoose Promise with Bluebird Promises
@@ -21,6 +22,7 @@ module.exports = {
     this.connection = mongoose.connect(mongodbURL, {})
       .then(() => {
         console.log('Connected to MongoDB. MongoDB URL: "' + mongodbURL + '"');
+        loadInitialData();
       })
       .catch(err => {
         console.error('Failed to connect to MongoDB. Error:', err);

@@ -1,5 +1,5 @@
 {
-    "host": "http://localhost:5000",
+    "host": "http://13.232.213.255:5000",
     "corsAllowedDomains": [
       "*"
     ],
