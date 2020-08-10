@@ -5,7 +5,8 @@ const UserSchema = Schema({
     name: {
         type: String,
         required: [true, 'Name is required'],
-        maxlength: [100, 'Name exceeds 100 characters']
+        maxlength: [100, 'Name exceeds 100 characters'],
+        unique: true
     },
     passCode: {
         type: String,

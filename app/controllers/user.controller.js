@@ -10,204 +10,228 @@ const {
   ApiConstants
 } = require('../constants/statusCodes');
 
-// const updateUser = (req, res) => {
-//   const { user, firstName, lastName, phoneNumber } = req.body;
-//   User.update(
-//     { _id: user, firstName, lastName, phoneNumber }
-//   )
-//     .then(user => {
-//       res.send(user);
-//     }).catch(err => {
-//       if (err.CastError) {
-//         res.status(ApiConstants.PRE_CONDITION_FAILED.statusCode).send({
-//           status: ApiConstants.PRE_CONDITION_FAILED.status,
-//           error: "User Id does not exist"
-//         });
-//       } else {
-//         res.status(ApiConstants.PRE_CONDITION_FAILED.statusCode).send({
-//           status: ApiConstants.PRE_CONDITION_FAILED.status,
-//           error: err.message
-//         });
-//       }
-//     });
-// };
+const getUserById = async (req, res) => {
 
-const getUserById = (req, res) => {
-  const userId = req.params.userId;
-  User.findOne({
+  try {
+    const userId = req.params.userId;
+
+    if (!userId || typeof (userId) !== 'string') {
+      return res.status(ApiConstants.PRE_CONDITION_FAILED.statusCode).send({
+        status: ApiConstants.PRE_CONDITION_FAILED.status,
+        error: 'User does not exist'
+      });
+    }
+
+    const user = await User.findOne({
       _id: userId
-    })
-    .then(user => {
-      const {
-        _id,
-        name,
-        isVoted,
-        authToken,
-        isAdmin
-      } = user;
-      return res.send({
-        userId: _id,
-        name,
-        isVoted,
-        authToken,
-        isAdmin
-      });
-    }).catch(err => {
-      res.status(ApiConstants.DATA_NOT_FOUND.statusCode).send({
-        status: ApiConstants.DATA_NOT_FOUND.status,
-        error: err.message
-      });
     });
+    const {
+      _id,
+      name,
+      isVoted,
+      authToken,
+      isAdmin
+    } = user;
+    return res.send({
+      userId: _id,
+      name,
+      isVoted,
+      authToken,
+      isAdmin
+    });
+  } catch (err) {
+    return res.status(ApiConstants.PRE_CONDITION_FAILED.statusCode).send({
+      status: ApiConstants.PRE_CONDITION_FAILED.status,
+      error: err.message
+    });
+  }
 };
 
-const getUserByToken = (req, res) => {
-  const authToken = req.params.authToken;
-  User.findOne({
+const getUserByToken = async (req, res) => {
+  try {
+    const authToken = req.params.authToken;
+
+    if (!authToken || typeof (authToken) !== 'string') {
+      return res.status(ApiConstants.PRE_CONDITION_FAILED.statusCode).send({
+        status: ApiConstants.PRE_CONDITION_FAILED.status,
+        error: 'User token does not exist'
+      });
+    }
+
+    const user = await User.findOne({
       authToken: authToken
-    })
-    .then(user => {
-      if (_.isEmpty(user)) {
-        return res.status(ApiConstants.PRE_CONDITION_FAILED.statusCode).send({
-          status: ApiConstants.PRE_CONDITION_FAILED.status,
-          error: 'User does not exist for the token'
-        });
-      }
-      const {
-        _id,
-        name,
-        isVoted,
-        authToken,
-        isAdmin
-      } = user;
-      return res.send({
-        userId: _id,
-        name,
-        isVoted,
-        authToken,
-        isAdmin
-      });
-    }).catch(err => {
-      return res.status(ApiConstants.DATA_NOT_FOUND.statusCode).send({
-        status: ApiConstants.DATA_NOT_FOUND.status,
-        error: err.message
-      });
     });
+    const {
+      _id,
+      name,
+      isVoted,
+      isAdmin
+    } = user;
+    return res.send({
+      userId: _id,
+      name,
+      isVoted,
+      authToken,
+      isAdmin
+    });
+  } catch (err) {
+    return res.status(ApiConstants.PRE_CONDITION_FAILED.statusCode).send({
+      status: ApiConstants.PRE_CONDITION_FAILED.status,
+      error: err.message
+    });
+  }
 };
 
-const voteForCandidate = (req, res) => {
-  const userId = req.params.userId;
-  const candidateId = req.params.candidateId;
-  User.findOne({
-      _id: userId
-    })
-    .then(user => {
-      const {
-        isVoted
-      } = user;
-      if (isVoted) {
-        return res.status(ApiConstants.DATA_NOT_FOUND.statusCode).send({
-          status: ApiConstants.DATA_NOT_FOUND.status,
-          error: err.message
-        });
-      }
-      user.isVoted = true;
-      user.candidate = candidateId;
-      user.save().then(() => {
-        CandidateModel.findOneAndUpdate({
-          _id: candidateId
-        }, {
-          $inc: {
-            'numberOfVotes': 1
-          }
-        }, {
-          new: true
-        }).then(candidate => {
-          res.status(200).json({
-            message: 'OK'
-          })
-        }).catch(err => {
-          return res.status(ApiConstants.DATA_NOT_FOUND.statusCode).send({
-            status: ApiConstants.DATA_NOT_FOUND.status,
-            error: err.message
-          });
-        })
+const voteForCandidate = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const candidateId = req.params.candidateId;
 
-      }).catch(err => {
-        return res.status(ApiConstants.DATA_NOT_FOUND.statusCode).send({
-          status: ApiConstants.DATA_NOT_FOUND.status,
-          error: err.message
-        });
-      })
-    }).catch(err => {
-      return res.status(ApiConstants.DATA_NOT_FOUND.statusCode).send({
-        status: ApiConstants.DATA_NOT_FOUND.status,
+    if (!userId || typeof (userId) !== 'string') {
+      return res.status(ApiConstants.PRE_CONDITION_FAILED.statusCode).send({
+        status: ApiConstants.PRE_CONDITION_FAILED.status,
+        error: 'User Id not valid'
+      });
+    }
+
+    if (!candidateId || typeof (candidateId) !== 'string') {
+      return res.status(ApiConstants.PRE_CONDITION_FAILED.statusCode).send({
+        status: ApiConstants.PRE_CONDITION_FAILED.status,
+        error: 'Candidate Id not valid'
+      });
+    }
+
+    const user = await User.findOne({ _id: userId });
+    const {
+      isVoted
+    } = user;
+    if (isVoted) {
+      return res.status(ApiConstants.BAD_REQUEST.statusCode).send({
+        status: ApiConstants.BAD_REQUEST.status,
         error: err.message
       });
+    }
+
+    user.isVoted = true;
+    user.candidate = candidateId;
+
+    await user.save();
+
+    await CandidateModel.findOneAndUpdate({
+      _id: candidateId
+    }, {
+      $inc: {
+        'numberOfVotes': 1
+      }
+    }, {
+      new: true
     });
+    return res.status(200).json({
+      message: 'OK'
+    })
+  } catch (err) {
+    return res.status(ApiConstants.BAD_REQUEST.statusCode).send({
+      status: ApiConstants.BAD_REQUEST.status,
+      error: err.message
+    });
+  }
 };
 
-const loginUser = (req, res) => {
-  const name = req.body.name;
-  const passCode = req.body.passCode;
+const loginUser = async (req, res) => {
+  try {
+    const name = req.body.name;
+    const passCode = req.body.passCode;
 
-  User.findOne({
+    if (!name || typeof (name) !== 'string') {
+      return res.status(ApiConstants.PRE_CONDITION_FAILED.statusCode).send({
+        status: ApiConstants.PRE_CONDITION_FAILED.status,
+        error: 'User credentials not valid'
+      });
+    }
+
+    if (!passCode || typeof (passCode) !== 'string') {
+      return res.status(ApiConstants.PRE_CONDITION_FAILED.statusCode).send({
+        status: ApiConstants.PRE_CONDITION_FAILED.status,
+        error: 'User credentials not valid'
+      });
+    }
+
+    const user = await User.findOne({
       name: name,
       passCode: passCode
-    })
-    .then(user => {
-      console.log('user', user)
-      const {
-        _id,
-        name,
-        isVoted,
-        isAdmin
-      } = user;
-      user.authToken = uuidv4();
-      user.save().then(() => {
-        res.status(200).json({
-          authToken: user.authToken,
-          userId: _id,
-          name: name,
-          isVoted: isVoted,
-          isAdmin: isAdmin
-        })
-      }).catch(err => {
-        return res.status(ApiConstants.DATA_NOT_FOUND.statusCode).send({
-          status: ApiConstants.DATA_NOT_FOUND.status,
-          error: err.message
-        });
-      });
-    }).catch(err => {
-      res.status(ApiConstants.DATA_NOT_FOUND.statusCode).send({
-        status: ApiConstants.DATA_NOT_FOUND.status,
-        error: err.message
-      });
     });
+    const {
+      _id,
+      isVoted,
+      isAdmin
+    } = user;
+    user.authToken = uuidv4();
+
+    await user.save();
+
+    return res.status(200).json({
+      authToken: user.authToken,
+      userId: _id,
+      name: name,
+      isVoted: isVoted,
+      isAdmin: isAdmin
+    })
+  } catch (err) {
+    return res.status(ApiConstants.BAD_REQUEST.statusCode).send({
+      status: ApiConstants.BAD_REQUEST.status,
+      error: err.message
+    });
+  }
 };
 
-const logoutUser = (req, res) => {
-  const authToken = req.headers['x-coda-global-app'];
-  User.findOne({
+const logoutUser = async (req, res) => {
+  try {
+    const authToken = req.headers['x-coda-global-app'];
+    if (!authToken || typeof (authToken) !== 'string') {
+      return res.status(ApiConstants.PRE_CONDITION_FAILED.statusCode).send({
+        status: ApiConstants.PRE_CONDITION_FAILED.status,
+        error: 'User token not valid'
+      });
+    }
+    const user = await User.findOne({
       authToken: authToken
-    })
-    .then(user => {
-      user.authToken = null;
-      user.save().then(() => {
-        res.status(200).json({
-          status: 'Success'
-        })
-      }).catch(err => {
-        return res.status(ApiConstants.DATA_NOT_FOUND.statusCode).send({
-          status: ApiConstants.DATA_NOT_FOUND.status,
-          error: err.message
-        });
-      });
-    }).catch(err => {
-      res.status(ApiConstants.DATA_NOT_FOUND.statusCode).send({
-        status: ApiConstants.DATA_NOT_FOUND.status,
-        error: err.message
-      });
     });
+    user.authToken = null;
+
+    await user.save();
+
+    return res.status(200).json({
+      status: 'Success'
+    })
+  } catch (err) {
+    res.status(ApiConstants.BAD_REQUEST.statusCode).send({
+      status: ApiConstants.BAD_REQUEST.status,
+      error: err.message
+    });
+  }
+};
+
+const registerUser = async (req, res) => {
+  try {
+    const {
+      name,
+      passCode,
+      isAdmin
+    } = req.body;
+    let user = new User();
+    user.name = name;
+    user.passCode = passCode;
+    user.isAdmin = isAdmin;
+    await user.save();
+    return res.status(200).json({
+      status: 'Success'
+    })
+  } catch (err) {
+    return res.status(ApiConstants.PRE_CONDITION_FAILED.statusCode).send({
+      status: ApiConstants.PRE_CONDITION_FAILED.status,
+      error: err.message
+    });
+  }
 };
 
 module.exports = {
@@ -215,5 +239,6 @@ module.exports = {
   getUserByToken,
   voteForCandidate,
   loginUser,
-  logoutUser
+  logoutUser,
+  registerUser
 };

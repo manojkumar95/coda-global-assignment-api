@@ -74,7 +74,8 @@ const createCandidates = () => {
       noOfChallengesSolved: 20,
       expertiseLevel: 1,
       expertiseIn: {
-        dataStructures: 1
+        c: 3,
+        python: 2
       },
       numberOfVotes: 0
     },
@@ -83,7 +84,8 @@ const createCandidates = () => {
       noOfChallengesSolved: 20,
       expertiseLevel: 1,
       expertiseIn: {
-        dataStructures: 1
+        dataStructures: 1,
+        java: 3
       },
       numberOfVotes: 0
     },
@@ -92,7 +94,8 @@ const createCandidates = () => {
       noOfChallengesSolved: 20,
       expertiseLevel: 1,
       expertiseIn: {
-        dataStructures: 1
+        c: 1,
+        java: 5
       },
       numberOfVotes: 0
     },
@@ -101,7 +104,8 @@ const createCandidates = () => {
       noOfChallengesSolved: 20,
       expertiseLevel: 1,
       expertiseIn: {
-        dataStructures: 1
+        dataStructures: 2,
+        python: 3
       },
       numberOfVotes: 0
     },
@@ -110,7 +114,9 @@ const createCandidates = () => {
       noOfChallengesSolved: 20,
       expertiseLevel: 1,
       expertiseIn: {
-        dataStructures: 1
+        dataStructures: 5,
+        c: 1,
+        java: 2
       },
       numberOfVotes: 0
     }

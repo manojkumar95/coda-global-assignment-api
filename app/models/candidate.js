@@ -5,7 +5,8 @@ const CandidateSchema = mongoose.Schema({
         type: String,
         required: [true, 'Candidate Name required'],
         maxlength: [100, 'Candidate Name exceeds 100 characters'],
-        trim: true
+        trim: true,
+        unique: true
     },
     noOfChallengesSolved: {
         type: Number,
