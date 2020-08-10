@@ -1,6 +1,7 @@
 const {
   v4: uuidv4
 } = require('uuid');
+const _ = require('lodash');
 
 const User = require('../models/user.js');
 const CandidateModel = require('../models/candidate');
@@ -41,13 +42,15 @@ const getUserById = (req, res) => {
         _id,
         name,
         isVoted,
-        authToken
+        authToken,
+        isAdmin
       } = user;
-      res.send({
+      return res.send({
         userId: _id,
         name,
         isVoted,
-        authToken
+        authToken,
+        isAdmin
       });
     }).catch(err => {
       res.status(ApiConstants.DATA_NOT_FOUND.statusCode).send({
@@ -63,20 +66,28 @@ const getUserByToken = (req, res) => {
       authToken: authToken
     })
     .then(user => {
+      if (_.isEmpty(user)) {
+        return res.status(ApiConstants.PRE_CONDITION_FAILED.statusCode).send({
+          status: ApiConstants.PRE_CONDITION_FAILED.status,
+          error: 'User does not exist for the token'
+        });
+      }
       const {
         _id,
         name,
         isVoted,
-        authToken
+        authToken,
+        isAdmin
       } = user;
-      res.send({
+      return res.send({
         userId: _id,
         name,
         isVoted,
-        authToken
+        authToken,
+        isAdmin
       });
     }).catch(err => {
-      res.status(ApiConstants.DATA_NOT_FOUND.statusCode).send({
+      return res.status(ApiConstants.DATA_NOT_FOUND.statusCode).send({
         status: ApiConstants.DATA_NOT_FOUND.status,
         error: err.message
       });
@@ -148,7 +159,8 @@ const loginUser = (req, res) => {
       const {
         _id,
         name,
-        isVoted
+        isVoted,
+        isAdmin
       } = user;
       user.authToken = uuidv4();
       user.save().then(() => {
@@ -156,7 +168,8 @@ const loginUser = (req, res) => {
           authToken: user.authToken,
           userId: _id,
           name: name,
-          isVoted: isVoted
+          isVoted: isVoted,
+          isAdmin: isAdmin
         })
       }).catch(err => {
         return res.status(ApiConstants.DATA_NOT_FOUND.statusCode).send({
