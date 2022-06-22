@@ -17,7 +17,7 @@
   "author": "Manoj Kumar",
   "license": "ISC",
   "dependencies": {
-    "async": "^3.2.0",
+    "async": "^3.2.2",
     "body-parser": "1.18.2",
     "chai-http": "^4.2.1",
     "config": "^3.3.1",
